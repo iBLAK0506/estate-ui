@@ -1,33 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import PropertyCard from '../../components/card/PropertyCard';
-import { get } from '../../lib/apiClient';
+import React, { useEffect, useState } from "react";
+// import PropertyCard from '../../components/card/PropertyCard';
+
+// 1. Import the default export from your stable apiClient
+import apiClient from "../../lib/apiClient";
+import "./listPage.scss"; // Assuming you have a stylesheet for this page
 
 export default function ListPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(()=>{
-    let mounted = true;
-    async function load(){
+  useEffect(() => {
+    async function load() {
       try {
-        const res = await get('/properties');
-        if (mounted) setItems(res.items || []);
+        // 2. Use the apiClient to make the API call
+        const res = await apiClient.get("/properties");
+
+        // The successful response from axios is nested in `res.data`
+        setItems(res.data.items || []);
       } catch (e) {
-        console.error('Failed to load properties', e);
-      } finally { if (mounted) setLoading(false); }
+        console.error("Failed to load properties", e);
+      } finally {
+        setLoading(false);
+      }
     }
     load();
-    return ()=> mounted = false;
-  },[]);
+  }, []);
 
   if (loading) return <div>Loading properties...</div>;
 
   return (
-    <div style={{padding:20}}>
+    <div className="listPage">
+      {/* You can add your actual list/card components here */}
       <h2>Listings</h2>
-      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(260px,1fr))',gap:12}}>
-        {items.map(it=> <PropertyCard key={it._id} prop={it} />)}
-      </div>
+      {items.length === 0 && <p>No properties found.</p>}
     </div>
   );
 }

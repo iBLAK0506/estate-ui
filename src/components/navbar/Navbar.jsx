@@ -1,45 +1,52 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "../../App.jsx";
-import "../../index.scss";
-import { AuthContext } from "../../context/AuthContext.jsx";
-
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <AuthContextProvider>
-      <App />
-    </AuthContextProvider>
-  </React.StrictMode>
-);
+import { AuthContext } from "../../context/AuthContext";
+import "./navbar.scss";
 
 function Navbar() {
-  const { user, logout } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="app-navbar">
-      <div className="brand">
-        <Link to="/">RealEstate</Link>
-      </div>
-      <div className="links">
+    <nav>
+      <div className="left">
+        <Link to="/" className="logo">
+          <img src="/logo.png" alt="LamaEstate Logo" />
+          <span>LamaEstate</span>
+        </Link>
         <Link to="/">Home</Link>
-        <Link to="/list">Listings</Link>
-        {user ? (
-          <>
-            <Link to="/profile">Profile</Link>
-            <Link to="/create">Add Property</Link>
-            <button onClick={logout} style={{ marginLeft: 8 }}>
-              Logout
-            </button>
-            <span style={{ marginLeft: 8 }}>{user.name}</span>
-          </>
+        <Link to="/about">About</Link>
+        <Link to="/contact">Contact</Link>
+        <Link to="/agents">Agents</Link>
+      </div>
+      <div className="right">
+        {currentUser ? (
+          <div className="user">
+            <img
+              src={currentUser.avatarUrl || "/noavatar.jpg"}
+              alt="User Avatar"
+            />
+            <span>{currentUser.name}</span>
+            <Link to="/profile" className="profile">
+              <div className="notification">3</div>
+              <span>Profile</span>
+            </Link>
+            {/* The Logout button has been removed from here */}
+          </div>
         ) : (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
+            <Link to="/login">Sign in</Link>
+            <Link to="/register" className="primary-action">
+              Sign up
+            </Link>
           </>
         )}
+        <div className="menuIcon" onClick={() => setMenuOpen(!menuOpen)}>
+          <img src="/menu.png" alt="Menu" />
+        </div>
+        <div className={menuOpen ? "menu active" : "menu"}>
+          {/* ... mobile menu links ... */}
+        </div>
       </div>
     </nav>
   );
