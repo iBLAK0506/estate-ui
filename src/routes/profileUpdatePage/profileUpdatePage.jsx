@@ -15,19 +15,23 @@ function ProfileUpdatePage() {
     const { name, email, password } = Object.fromEntries(formData);
 
     try {
-      // Use the stable apiClient to send the update request
-      const res = await apiClient.patch("/users/me", {
-        name,
-        // Your current backend only updates the name and avatar.
-        // Email/password logic would need to be added to the controller.
-      });
+      // Create a payload object to send to the backend
+      const payload = { name, email };
 
-      // Update the global state with the new user data
+      // Only include the password in the payload if the user entered a new one
+      if (password) {
+        payload.password = password;
+      }
+
+      // Send the complete payload to the backend's /users/me endpoint
+      const res = await apiClient.patch("/users/me", payload);
+
+      // Update the global state with the new user data from the response
       updateUser(res.data.user);
 
       alert("Profile updated successfully!");
 
-      // Navigate back to the profile page
+      // Navigate back to the profile page to see the changes
       navigate("/profile");
     } catch (err) {
       setError(err.response?.data?.message || "Update failed!");
@@ -58,7 +62,9 @@ function ProfileUpdatePage() {
             />
           </div>
           <div className="item">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">
+              New Password (leave blank to keep current)
+            </label>
             <input id="password" name="password" type="password" />
           </div>
           <button>Update</button>
@@ -68,7 +74,7 @@ function ProfileUpdatePage() {
       <div className="sideContainer">
         <img
           src={currentUser.avatarUrl || "/noavatar.jpg"}
-          alt=""
+          alt="User Avatar"
           className="avatar"
         />
       </div>

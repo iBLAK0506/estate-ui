@@ -31,7 +31,6 @@ function Navbar() {
               <div className="notification">3</div>
               <span>Profile</span>
             </Link>
-            {/* The Logout button has been removed from here */}
           </div>
         ) : (
           <>
@@ -44,8 +43,15 @@ function Navbar() {
         <div className="menuIcon" onClick={() => setMenuOpen(!menuOpen)}>
           <img src="/menu.png" alt="Menu" />
         </div>
+        {/* --- THIS IS THE FIX --- */}
+        {/* The mobile menu links have been added below */}
         <div className={menuOpen ? "menu active" : "menu"}>
-          {/* ... mobile menu links ... */}
+          <Link to="/">Home</Link>
+          <Link to="/about">About</Link>
+          <Link to="/contact">Contact</Link>
+          <Link to="/agents">Agents</Link>
+          {!currentUser && <Link to="/login">Sign in</Link>}
+          {!currentUser && <Link to="/register">Sign up</Link>}
         </div>
       </div>
     </nav>
